@@ -43,7 +43,7 @@ namespace Npgsql.TypeHandlers
         private BBPoint[][] _rings;
         private BBPoint[][][] _pols;
         private Stack<IGeometry[]> _geoms = new Stack<IGeometry[]>();
-        private Stack<Counter> _icol = new Stack<Counter>();        
+        private Stack<Counter> _icol = new Stack<Counter>();
         private IGeometry _toWrite;
 
 
