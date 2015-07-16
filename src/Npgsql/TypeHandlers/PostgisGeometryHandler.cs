@@ -21,12 +21,6 @@ namespace Npgsql.TypeHandlers
         {
             private int _value = 0;
 
-            public int Value
-            {
-                get { return _value; }
-                set { _value = value; }
-            }
-
             public void Increment()
             {
                 _value++;
