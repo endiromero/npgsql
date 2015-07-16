@@ -78,7 +78,7 @@ namespace Npgsql.TypeHandlers
             }
             if (!_srid.HasValue)
             {
-                if ((_id & (uint)OgrModifier.HasSRID) != 0)
+                if ((_id & (uint)EwkbModifier.HasSRID) != 0)
                 {
                     if (_buf.ReadBytesLeft < 4)
                         return false;
@@ -90,16 +90,16 @@ namespace Npgsql.TypeHandlers
                 }
             }
 
-            switch ((OgrIdentifier)(_id & (uint)7))
+            switch ((WkbIdentifier)(_id & (uint)7))
             {
-                case OgrIdentifier.Point:
+                case WkbIdentifier.Point:
                     if (_buf.ReadBytesLeft < 16)
                         return false;
                     result = new PostgisPoint(_buf.PostgisReadDouble(), _buf.PostgisReadDouble());
                     result.SRID = _srid.Value;
                     return true;
 
-                case OgrIdentifier.LineString:
+                case WkbIdentifier.LineString:
                     if (_ipts == -1)
                     {
                         if (_buf.ReadBytesLeft < 4)
@@ -117,7 +117,7 @@ namespace Npgsql.TypeHandlers
                     result.SRID = _srid.Value;
                     return true;
 
-                case OgrIdentifier.Polygon:
+                case WkbIdentifier.Polygon:
                     if (_irng == -1)
                     {
                         if (_buf.ReadBytesLeft < 4)
@@ -147,7 +147,7 @@ namespace Npgsql.TypeHandlers
                     result.SRID = _srid.Value;
                     return true;
 
-                case OgrIdentifier.MultiPoint:
+                case WkbIdentifier.MultiPoint:
                     if (_ipts == -1)
                     {
                         if (_buf.ReadBytesLeft < 4)
@@ -166,7 +166,7 @@ namespace Npgsql.TypeHandlers
                     result.SRID = _srid.Value;
                     return true;
 
-                case OgrIdentifier.MultiLineString:
+                case WkbIdentifier.MultiLineString:
                     if (_irng == -1)
                     {
                         if (_buf.ReadBytesLeft < 4)
@@ -197,7 +197,7 @@ namespace Npgsql.TypeHandlers
                     result.SRID = _srid.Value;
                     return true;
 
-                case OgrIdentifier.MultiPolygon:
+                case WkbIdentifier.MultiPolygon:
                     if (_ipol == -1)
                     {
                         if (_buf.ReadBytesLeft < 4)
@@ -239,7 +239,7 @@ namespace Npgsql.TypeHandlers
                     result.SRID = _srid.Value;
                     return true;
 
-                case OgrIdentifier.GeometryCollection:
+                case WkbIdentifier.GeometryCollection:
                     if (_newGeom)
                     {
                         if (_buf.ReadBytesLeft < 4)
@@ -306,14 +306,14 @@ namespace Npgsql.TypeHandlers
                     if (_buf.WriteSpaceLeft < 9)
                         return false;
                     _buf.WriteByte((byte)(BitConverter.IsLittleEndian ? 1 : 0));
-                    _buf.PostgisWriteUInt32((uint)geom.Identifier | (uint) OgrModifier.HasSRID);
+                    _buf.PostgisWriteUInt32((uint)geom.Identifier | (uint) EwkbModifier.HasSRID);
                     _buf.PostgisWriteUInt32(geom.SRID);
                 }
                 _newGeom = false;
             }
             switch (geom.Identifier)
             {
-                case OgrIdentifier.Point:
+                case WkbIdentifier.Point:
                     if (_buf.WriteSpaceLeft < 16)
                         return false;
                     var p = (PostgisPoint)geom;
@@ -321,7 +321,7 @@ namespace Npgsql.TypeHandlers
                     _buf.PostgisWriteDouble(p.Y);
                     return true;
                     
-                case OgrIdentifier.LineString:
+                case WkbIdentifier.LineString:
                     var l = (PostgisLineString)geom;
                     if (_ipts == -1)
                     {
@@ -339,7 +339,7 @@ namespace Npgsql.TypeHandlers
                     }
                     return true;
 
-                case OgrIdentifier.Polygon:
+                case WkbIdentifier.Polygon:
                     var pol = (PostgisPolygon)geom;
                     if (_irng == -1)
                     {
@@ -368,7 +368,7 @@ namespace Npgsql.TypeHandlers
                     }
                     return true;
 
-                case OgrIdentifier.MultiPoint:
+                case WkbIdentifier.MultiPoint:
                      var mp = (PostgisMultiPoint)geom;
                     if (_ipts == -1)
                     {
@@ -382,13 +382,13 @@ namespace Npgsql.TypeHandlers
                         if (_buf.WriteSpaceLeft < 21)
                             return false;
                         _buf.WriteByte((byte)(BitConverter.IsLittleEndian ? 1 : 0));
-                        _buf.PostgisWriteUInt32((uint)OgrIdentifier.Point);
+                        _buf.PostgisWriteUInt32((uint)WkbIdentifier.Point);
                         _buf.PostgisWriteDouble(mp[_ipts].X);
                         _buf.PostgisWriteDouble(mp[_ipts].Y);
                     }
                     return true;
                     
-                case OgrIdentifier.MultiLineString:
+                case WkbIdentifier.MultiLineString:
                     var ml = (PostgisMultiLineString)geom;
                     if (_irng == -1)
                     {
@@ -404,7 +404,7 @@ namespace Npgsql.TypeHandlers
                             if (_buf.WriteSpaceLeft < 9)
                                 return false;
                             _buf.WriteByte((byte)(BitConverter.IsLittleEndian ? 1 : 0));
-                            _buf.PostgisWriteUInt32((uint)OgrIdentifier.LineString);
+                            _buf.PostgisWriteUInt32((uint)WkbIdentifier.LineString);
                             _buf.PostgisWriteUInt32((uint)ml[_irng].PointCount);
                             _ipts = 0;
                         }
@@ -419,7 +419,7 @@ namespace Npgsql.TypeHandlers
                     }
                     return true;
 
-                case OgrIdentifier.MultiPolygon:
+                case WkbIdentifier.MultiPolygon:
                     var mpl = (PostgisMultiPolygon)geom;
                     if (_ipol == -1)
                     {
@@ -435,7 +435,7 @@ namespace Npgsql.TypeHandlers
                             if (_buf.WriteSpaceLeft < 9)
                                 return false;
                             _buf.WriteByte((byte)(BitConverter.IsLittleEndian ? 1 : 0));
-                            _buf.PostgisWriteUInt32((uint)OgrIdentifier.Polygon);
+                            _buf.PostgisWriteUInt32((uint)WkbIdentifier.Polygon);
                             _buf.PostgisWriteUInt32((uint)mpl[_ipol].RingCount);
                             _irng = 0;
                         }
@@ -460,7 +460,7 @@ namespace Npgsql.TypeHandlers
                     }
                     return true;
 
-                case OgrIdentifier.GeometryCollection:
+                case WkbIdentifier.GeometryCollection:
                     var coll = (PostgisGeometryCollection)geom;
                     if (!_newGeom)
                     {

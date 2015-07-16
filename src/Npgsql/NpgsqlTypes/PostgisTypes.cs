@@ -6,12 +6,12 @@ using Npgsql;
 
 namespace NpgsqlTypes
 {
-#pragma  warning disable 1591
+        #pragma  warning disable 1591
         /// <summary>
         /// Represents the identifier of the Well Known Binary representation of a geographical feature specified by the OGC.
         /// http://portal.opengeospatial.org/files/?artifact_id=13227 Chapter 6.3.2.7 
         /// </summary>
-        enum OgrIdentifier : uint
+        enum WkbIdentifier : uint
         {
             Point = 1,
             LineString = 2,
@@ -26,7 +26,7 @@ namespace NpgsqlTypes
         /// The modifiers used by postgis to extend the geomtry's binary representation
         /// </summary>
         [Flags]
-        enum OgrModifier : uint
+        enum EwkbModifier : uint
         {
             HasSRID = 0x20000000,
             HasMDim = 0x40000000,
@@ -67,7 +67,7 @@ namespace NpgsqlTypes
             /// </summary>
             /// <returns></returns>
             protected abstract int GetLenHelper();
-            internal abstract OgrIdentifier Identifier { get;}
+            internal abstract WkbIdentifier Identifier { get;}
 
             internal int GetLen()
             {
@@ -94,9 +94,9 @@ namespace NpgsqlTypes
             private Double _x;
             private Double _y;
 
-            internal override OgrIdentifier Identifier
+            internal override WkbIdentifier Identifier
             {
-                get { return OgrIdentifier.Point; }
+                get { return WkbIdentifier.Point; }
             }
 
             protected override int GetLenHelper()
@@ -160,9 +160,9 @@ namespace NpgsqlTypes
         {
             private BBPoint[] _points;
 
-            internal override OgrIdentifier Identifier
+            internal override WkbIdentifier Identifier
             {
-                get { return OgrIdentifier.LineString; }
+                get { return WkbIdentifier.LineString; }
             }
 
             protected override int GetLenHelper()
@@ -252,9 +252,9 @@ namespace NpgsqlTypes
                 return 4 + _rings.Length * 4 + TotalPointCount * 16;
             }
 
-            internal override OgrIdentifier Identifier
+            internal override WkbIdentifier Identifier
             {
-                get { return OgrIdentifier.Polygon; }
+                get { return WkbIdentifier.Polygon; }
             }
 
             public BBPoint this[Int32 ringIndex, Int32 pointIndex]
@@ -354,9 +354,9 @@ namespace NpgsqlTypes
         {
             private BBPoint[] _points;
 
-            internal override OgrIdentifier Identifier
+            internal override WkbIdentifier Identifier
             {
-                get { return OgrIdentifier.MultiPoint; }
+                get { return WkbIdentifier.MultiPoint; }
             }
 
             protected override int GetLenHelper()
@@ -448,9 +448,9 @@ namespace NpgsqlTypes
                 }
             }
 
-            internal override OgrIdentifier Identifier
+            internal override WkbIdentifier Identifier
             {
-                get { return OgrIdentifier.MultiLineString; }
+                get { return WkbIdentifier.MultiLineString; }
             }
 
             protected override int GetLenHelper()
@@ -554,9 +554,9 @@ namespace NpgsqlTypes
                 return this.GetEnumerator();
             }
 
-            internal override OgrIdentifier Identifier
+            internal override WkbIdentifier Identifier
             {
-                get { return OgrIdentifier.MultiPolygon; }
+                get { return WkbIdentifier.MultiPolygon; }
             }
 
             public PostgisPolygon this[Int32 index]
@@ -644,9 +644,9 @@ namespace NpgsqlTypes
                 get { return _geometries[index]; }
             }
 
-            internal override OgrIdentifier Identifier
+            internal override WkbIdentifier Identifier
             {
-                get { return OgrIdentifier.GeometryCollection; }
+                get { return WkbIdentifier.GeometryCollection; }
             }
 
             public IEnumerator<IGeometry> GetEnumerator()
@@ -723,4 +723,3 @@ namespace NpgsqlTypes
             }
         }
 }
-    
