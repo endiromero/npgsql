@@ -160,7 +160,7 @@ namespace Npgsql.Tests.Types
                 }
                 catch (NpgsqlException)
                 {
-                    Assert.Ignore("Skipping tests : postgis extension not found.");
+                    TestUtil.IgnoreExceptOnBuildServer(("Skipping tests : postgis extension not found."));
                 }
             }
         }
