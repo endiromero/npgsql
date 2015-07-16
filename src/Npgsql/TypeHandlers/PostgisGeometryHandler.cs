@@ -39,9 +39,9 @@ namespace Npgsql.TypeHandlers
         private int _ipol, _ipts, _irng;
 
         private NpgsqlBuffer _buf;
-        private BBPoint[] _points;
-        private BBPoint[][] _rings;
-        private BBPoint[][][] _pols;
+        private Coordinate2D[] _points;
+        private Coordinate2D[][] _rings;
+        private Coordinate2D[][][] _pols;
         private Stack<IGeometry[]> _geoms = new Stack<IGeometry[]>();
         private Stack<Counter> _icol = new Stack<Counter>();
         private IGeometry _toWrite;
@@ -104,14 +104,14 @@ namespace Npgsql.TypeHandlers
                     {
                         if (_buf.ReadBytesLeft < 4)
                             return false;
-                        _points = new BBPoint[_buf.PostgisReadInt32()];
+                        _points = new Coordinate2D[_buf.PostgisReadInt32()];
                         _ipts = 0;
                     }
                     for (; _ipts < _points.Length; _ipts++)
                     {
                         if (_buf.ReadBytesLeft < 16)
                             return false;
-                        _points[_ipts] = new BBPoint(_buf.PostgisReadDouble(), _buf.PostgisReadDouble());
+                        _points[_ipts] = new Coordinate2D(_buf.PostgisReadDouble(), _buf.PostgisReadDouble());
                     }
                     result = new PostgisLineString(_points);
                     result.SRID = _srid.Value;
@@ -122,7 +122,7 @@ namespace Npgsql.TypeHandlers
                     {
                         if (_buf.ReadBytesLeft < 4)
                             return false;
-                        _rings = new BBPoint[_buf.PostgisReadInt32()][];
+                        _rings = new Coordinate2D[_buf.PostgisReadInt32()][];
                         _irng = 0;
                     }
 
@@ -132,14 +132,14 @@ namespace Npgsql.TypeHandlers
                         {
                             if (_buf.ReadBytesLeft < 4)
                                 return false;
-                            _rings[_irng] = new BBPoint[_buf.PostgisReadInt32()];
+                            _rings[_irng] = new Coordinate2D[_buf.PostgisReadInt32()];
                             _ipts = 0;
                         }
                         for (; _ipts < _rings[_irng].Length; _ipts++)
                         {
                             if (_buf.ReadBytesLeft < 16)
                                 return false;
-                            _rings[_irng][_ipts] = new BBPoint(_buf.PostgisReadDouble(), _buf.PostgisReadDouble());
+                            _rings[_irng][_ipts] = new Coordinate2D(_buf.PostgisReadDouble(), _buf.PostgisReadDouble());
                         }
                         _ipts = -1;
                     }
@@ -152,7 +152,7 @@ namespace Npgsql.TypeHandlers
                     {
                         if (_buf.ReadBytesLeft < 4)
                             return false;
-                        _points = new BBPoint[_buf.PostgisReadInt32()];
+                        _points = new Coordinate2D[_buf.PostgisReadInt32()];
                         _ipts = 0;
                     }
                     for (; _ipts < _points.Length; _ipts++)
@@ -160,7 +160,7 @@ namespace Npgsql.TypeHandlers
                         if (_buf.ReadBytesLeft < 21)
                             return false;
                         _buf.Skip(5);
-                        _points[_ipts] = new BBPoint(_buf.PostgisReadDouble(), _buf.PostgisReadDouble());
+                        _points[_ipts] = new Coordinate2D(_buf.PostgisReadDouble(), _buf.PostgisReadDouble());
                     }
                     result = new PostgisMultiPoint(_points);
                     result.SRID = _srid.Value;
@@ -171,7 +171,7 @@ namespace Npgsql.TypeHandlers
                     {
                         if (_buf.ReadBytesLeft < 4)
                             return false;
-                        _rings = new BBPoint[_buf.PostgisReadInt32()][];
+                        _rings = new Coordinate2D[_buf.PostgisReadInt32()][];
                         _irng = 0;
                     }
 
@@ -182,14 +182,14 @@ namespace Npgsql.TypeHandlers
                             if (_buf.ReadBytesLeft < 9)
                                 return false;
                             _buf.Skip(5);
-                            _rings[_irng] = new BBPoint[_buf.PostgisReadInt32()];
+                            _rings[_irng] = new Coordinate2D[_buf.PostgisReadInt32()];
                             _ipts = 0;
                         }
                         for (; _ipts < _rings[_irng].Length; _ipts++)
                         {
                             if (_buf.ReadBytesLeft < 16)
                                 return false;
-                            _rings[_irng][_ipts] = new BBPoint(_buf.PostgisReadDouble(), _buf.PostgisReadDouble());
+                            _rings[_irng][_ipts] = new Coordinate2D(_buf.PostgisReadDouble(), _buf.PostgisReadDouble());
                         }
                         _ipts = -1;
                     }
@@ -202,7 +202,7 @@ namespace Npgsql.TypeHandlers
                     {
                         if (_buf.ReadBytesLeft < 4)
                             return false;
-                        _pols = new BBPoint[_buf.PostgisReadInt32()][][];
+                        _pols = new Coordinate2D[_buf.PostgisReadInt32()][][];
                         _ipol = 0;
                     }
 
@@ -213,7 +213,7 @@ namespace Npgsql.TypeHandlers
                             if (_buf.ReadBytesLeft < 9)
                                 return false;
                             _buf.Skip(5);
-                            _pols[_ipol] = new BBPoint[_buf.PostgisReadInt32()][];
+                            _pols[_ipol] = new Coordinate2D[_buf.PostgisReadInt32()][];
                             _irng = 0;
                         }
                         for (; _irng < _pols[_ipol].Length; _irng++)
@@ -222,14 +222,14 @@ namespace Npgsql.TypeHandlers
                             {
                                 if (_buf.ReadBytesLeft < 4)
                                     return false;
-                                _pols[_ipol][_irng] = new BBPoint[_buf.PostgisReadInt32()];
+                                _pols[_ipol][_irng] = new Coordinate2D[_buf.PostgisReadInt32()];
                                 _ipts = 0;
                             }
                             for (; _ipts < _pols[_ipol][_irng].Length; _ipts++)
                             {
                                 if (_buf.ReadBytesLeft < 16)
                                     return false;
-                                _pols[_ipol][_irng][_ipts] = new BBPoint(_buf.PostgisReadDouble(), _buf.PostgisReadDouble());
+                                _pols[_ipol][_irng][_ipts] = new Coordinate2D(_buf.PostgisReadDouble(), _buf.PostgisReadDouble());
                             }
                             _ipts = -1;
                         }

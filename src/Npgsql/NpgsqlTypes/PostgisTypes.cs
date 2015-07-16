@@ -36,7 +36,7 @@ namespace NpgsqlTypes
     /// <summary>
     /// A structure representing a 2D double precision floating point coordinate;
     /// </summary>
-    public struct BBPoint
+    public struct Coordinate2D
     {
         /// <summary>
         /// X coordinate.
@@ -53,7 +53,7 @@ namespace NpgsqlTypes
         /// </summary>
         /// <param name="x">X coordinate</param>
         /// <param name="y">Y coordinate</param>
-        public BBPoint(Double x, Double y) { X = x; Y = y;}
+        public Coordinate2D(Double x, Double y) { X = x; Y = y;}
     }
               
     /// <summary>
@@ -156,9 +156,9 @@ namespace NpgsqlTypes
     /// <summary>
     /// Represents an Ogc 2D LineString
     /// </summary>
-    public class PostgisLineString : IGeometry, IEquatable<PostgisLineString>, IEnumerable<BBPoint>
+    public class PostgisLineString : IGeometry, IEquatable<PostgisLineString>, IEnumerable<Coordinate2D>
     {
-        private BBPoint[] _points;
+        private Coordinate2D[] _points;
 
         internal override WkbIdentifier Identifier
         {
@@ -170,9 +170,9 @@ namespace NpgsqlTypes
             return 4 + _points.Length * 16;
         }
 
-        public IEnumerator<BBPoint> GetEnumerator()
+        public IEnumerator<Coordinate2D> GetEnumerator()
         {
-            return ((IEnumerable<BBPoint>)_points).GetEnumerator();
+            return ((IEnumerable<Coordinate2D>)_points).GetEnumerator();
         }
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
@@ -180,12 +180,12 @@ namespace NpgsqlTypes
             return this.GetEnumerator();
         }
 
-        public BBPoint this[Int32 index]
+        public Coordinate2D this[Int32 index]
         {
             get { return _points[index]; }
         }
 
-        public PostgisLineString(IEnumerable<BBPoint> points)
+        public PostgisLineString(IEnumerable<Coordinate2D> points)
         {
             _points = points.ToArray();
         }
@@ -245,7 +245,7 @@ namespace NpgsqlTypes
     public class PostgisPolygon : IGeometry, IEquatable<PostgisPolygon>
     {
 
-        private BBPoint[][] _rings;
+        private Coordinate2D[][] _rings;
 
         protected override int GetLenHelper()
         {
@@ -257,7 +257,7 @@ namespace NpgsqlTypes
             get { return WkbIdentifier.Polygon; }
         }
 
-        public BBPoint this[Int32 ringIndex, Int32 pointIndex]
+        public Coordinate2D this[Int32 ringIndex, Int32 pointIndex]
         {
             get
             {
@@ -265,7 +265,7 @@ namespace NpgsqlTypes
             }
         }
 
-        public BBPoint[] this[Int32 ringIndex]
+        public Coordinate2D[] this[Int32 ringIndex]
         {
             get
             {
@@ -273,7 +273,7 @@ namespace NpgsqlTypes
             }
         }
 
-        public PostgisPolygon(IEnumerable<IEnumerable<BBPoint>> rings)
+        public PostgisPolygon(IEnumerable<IEnumerable<Coordinate2D>> rings)
         {
             _rings = rings.Select(x => x.ToArray()).ToArray();
         }
@@ -350,9 +350,9 @@ namespace NpgsqlTypes
     /// <summary>
     /// Represents a Postgis 2D MultiPoint
     /// </summary>
-    public class PostgisMultiPoint : IGeometry, IEquatable<PostgisMultiPoint>, IEnumerable<BBPoint>
+    public class PostgisMultiPoint : IGeometry, IEquatable<PostgisMultiPoint>, IEnumerable<Coordinate2D>
     {
-        private BBPoint[] _points;
+        private Coordinate2D[] _points;
 
         internal override WkbIdentifier Identifier
         {
@@ -364,9 +364,9 @@ namespace NpgsqlTypes
             return 4 + _points.Length * 21; //each point of a multipoint is a postgispoint, not a building block point.
         }
 
-        public IEnumerator<BBPoint> GetEnumerator()
+        public IEnumerator<Coordinate2D> GetEnumerator()
         {
-            return ((IEnumerable<BBPoint>)_points).GetEnumerator();
+            return ((IEnumerable<Coordinate2D>)_points).GetEnumerator();
         }
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
@@ -374,12 +374,12 @@ namespace NpgsqlTypes
             return this.GetEnumerator();
         }
 
-        public PostgisMultiPoint(IEnumerable<BBPoint> points)
+        public PostgisMultiPoint(IEnumerable<Coordinate2D> points)
         {
             _points = points.ToArray();
         }
 
-        public BBPoint this[Int32 indexer]
+        public Coordinate2D this[Int32 indexer]
         {
             get { return _points[indexer]; }
         }
@@ -439,7 +439,7 @@ namespace NpgsqlTypes
     {
         private PostgisLineString[] _lineStrings;
 
-        internal PostgisMultiLineString(BBPoint[][] pointArray)
+        internal PostgisMultiLineString(Coordinate2D[][] pointArray)
         {
             _lineStrings = new PostgisLineString[pointArray.Length];
             for (int i = 0; i < pointArray.Length; i++)
@@ -483,7 +483,7 @@ namespace NpgsqlTypes
             get { return _lineStrings[index]; }
         }
 
-        public PostgisMultiLineString(IEnumerable<IEnumerable<BBPoint>> pointList)
+        public PostgisMultiLineString(IEnumerable<IEnumerable<Coordinate2D>> pointList)
         {
             _lineStrings = pointList.Select(x => new PostgisLineString(x)).ToArray();
         }
@@ -569,7 +569,7 @@ namespace NpgsqlTypes
             _polygons = polygons.ToArray();
         }
 
-        public PostgisMultiPolygon(IEnumerable<IEnumerable<IEnumerable<BBPoint>>> ringList)
+        public PostgisMultiPolygon(IEnumerable<IEnumerable<IEnumerable<Coordinate2D>>> ringList)
         {
             _polygons = ringList.Select(x => new PostgisPolygon(x)).ToArray();
         }

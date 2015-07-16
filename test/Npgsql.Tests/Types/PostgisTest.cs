@@ -152,42 +152,42 @@ namespace Npgsql.Tests.Types
 
             _geoms.Add("line", new TestAtt()
             {
-                Geom = new PostgisLineString(new BBPoint[] { new BBPoint(1D, 1D), new BBPoint(1D, 2500D) }),
+                Geom = new PostgisLineString(new Coordinate2D[] { new Coordinate2D(1D, 1D), new Coordinate2D(1D, 2500D) }),
                 SQL = "st_makeline(st_makepoint(1,1),st_makepoint(1,2500))"
             });
 
             _geoms.Add("poly", new TestAtt()
             {
-                Geom = new PostgisPolygon(new BBPoint[][] 
-                                                    { new BBPoint[] {
-                                                        new BBPoint(1d,1d),
-                                                        new BBPoint(2d,2d),
-                                                        new BBPoint(3d,3d),
-                                                        new BBPoint(1d,1d)}
+                Geom = new PostgisPolygon(new Coordinate2D[][] 
+                                                    { new Coordinate2D[] {
+                                                        new Coordinate2D(1d,1d),
+                                                        new Coordinate2D(2d,2d),
+                                                        new Coordinate2D(3d,3d),
+                                                        new Coordinate2D(1d,1d)}
                                                     }),
                 SQL = "st_makepolygon(st_makeline(ARRAY[st_makepoint(1,1),st_makepoint(2,2),st_makepoint(3,3),st_makepoint(1,1)]))"
             });
 
             _geoms.Add("mpoint", new TestAtt()
             {
-                Geom = new PostgisMultiPoint(new BBPoint[] { new BBPoint(1D, 1D) }),
+                Geom = new PostgisMultiPoint(new Coordinate2D[] { new Coordinate2D(1D, 1D) }),
                 SQL = "st_multi(st_makepoint(1,1))"
             });
 
             _geoms.Add("mline", new TestAtt()
             {
-                Geom = new PostgisMultiLineString(new PostgisLineString[] { new PostgisLineString(new BBPoint[] { new BBPoint(1D, 1D), new BBPoint(1D, 2500D) }) }),
+                Geom = new PostgisMultiLineString(new PostgisLineString[] { new PostgisLineString(new Coordinate2D[] { new Coordinate2D(1D, 1D), new Coordinate2D(1D, 2500D) }) }),
                 SQL = "st_multi(st_makeline(st_makepoint(1,1),st_makepoint(1,2500)))"
             });
 
             _geoms.Add("mpoly", new TestAtt()
             {
-                Geom = new PostgisMultiPolygon(new PostgisPolygon[] {new PostgisPolygon( new BBPoint[][] 
-                                                    { new BBPoint[] {
-                                                        new BBPoint(1d,1d),
-                                                        new BBPoint(2d,2d),
-                                                        new BBPoint(3d,3d),
-                                                        new BBPoint(1d,1d)}
+                Geom = new PostgisMultiPolygon(new PostgisPolygon[] {new PostgisPolygon( new Coordinate2D[][] 
+                                                    { new Coordinate2D[] {
+                                                        new Coordinate2D(1d,1d),
+                                                        new Coordinate2D(2d,2d),
+                                                        new Coordinate2D(3d,3d),
+                                                        new Coordinate2D(1d,1d)}
                                                     }) }),
                 SQL = "st_multi(st_makepolygon(st_makeline(ARRAY[st_makepoint(1,1),st_makepoint(2,2),st_makepoint(3,3),st_makepoint(1,1)])))"
             });
@@ -196,12 +196,12 @@ namespace Npgsql.Tests.Types
                 {
                     Geom = new PostgisGeometryCollection(new IGeometry[]{
                             new PostgisPoint(1,1),
-                            new PostgisMultiPolygon (new PostgisPolygon[] {new PostgisPolygon( new BBPoint[][] 
-                                                    { new BBPoint[] {
-                                                        new BBPoint(1d,1d),
-                                                        new BBPoint(2d,2d),
-                                                        new BBPoint(3d,3d),
-                                                        new BBPoint(1d,1d)}
+                            new PostgisMultiPolygon (new PostgisPolygon[] {new PostgisPolygon( new Coordinate2D[][] 
+                                                    { new Coordinate2D[] {
+                                                        new Coordinate2D(1d,1d),
+                                                        new Coordinate2D(2d,2d),
+                                                        new Coordinate2D(3d,3d),
+                                                        new Coordinate2D(1d,1d)}
                                                     })})
                             }
                             ),
@@ -217,12 +217,12 @@ namespace Npgsql.Tests.Types
                                 {
                                     new PostgisPoint(1,1),
                                     new PostgisMultiPolygon (new PostgisPolygon[] {
-                                                                                new PostgisPolygon( new BBPoint[][] 
-                                                                                                  { new BBPoint[] {
-                                                                                                    new BBPoint(1d,1d),
-                                                                                                    new BBPoint(2d,2d),
-                                                                                                    new BBPoint(3d,3d),
-                                                                                                    new BBPoint(1d,1d)}
+                                                                                new PostgisPolygon( new Coordinate2D[][] 
+                                                                                                  { new Coordinate2D[] {
+                                                                                                    new Coordinate2D(1d,1d),
+                                                                                                    new Coordinate2D(2d,2d),
+                                                                                                    new Coordinate2D(3d,3d),
+                                                                                                    new Coordinate2D(1d,1d)}
                                                                                                   })
                                                              })
                                 })
