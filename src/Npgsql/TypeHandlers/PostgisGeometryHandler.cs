@@ -290,39 +290,39 @@ namespace Npgsql.TypeHandlers
             Reset();
         }
 
-        private bool Write(ref DirectBuffer directBuf,IGeometry geom)
+        public bool Write(ref DirectBuffer directBuf)
         {
             if (_newGeom)
             {
-                if (geom.SRID == 0)
+                if (_toWrite.SRID == 0)
                 {
                     if (_buf.WriteSpaceLeft < 5)
                         return false;
                     _buf.WriteByte((byte)(BitConverter.IsLittleEndian ? 1 : 0));
-                    _buf.PostgisWriteUInt32((uint)geom.Identifier);
+                    _buf.PostgisWriteUInt32((uint)_toWrite.Identifier);
                 }
                 else
                 {
                     if (_buf.WriteSpaceLeft < 9)
                         return false;
                     _buf.WriteByte((byte)(BitConverter.IsLittleEndian ? 1 : 0));
-                    _buf.PostgisWriteUInt32((uint)geom.Identifier | (uint) EwkbModifier.HasSRID);
-                    _buf.PostgisWriteUInt32(geom.SRID);
+                    _buf.PostgisWriteUInt32((uint)_toWrite.Identifier | (uint)EwkbModifier.HasSRID);
+                    _buf.PostgisWriteUInt32(_toWrite.SRID);
                 }
                 _newGeom = false;
             }
-            switch (geom.Identifier)
+            switch (_toWrite.Identifier)
             {
                 case WkbIdentifier.Point:
                     if (_buf.WriteSpaceLeft < 16)
                         return false;
-                    var p = (PostgisPoint)geom;
+                    var p = (PostgisPoint)_toWrite;
                     _buf.PostgisWriteDouble(p.X);
                     _buf.PostgisWriteDouble(p.Y);
                     return true;
-                    
+
                 case WkbIdentifier.LineString:
-                    var l = (PostgisLineString)geom;
+                    var l = (PostgisLineString)_toWrite;
                     if (_ipts == -1)
                     {
                         if (_buf.WriteSpaceLeft < 4)
@@ -340,7 +340,7 @@ namespace Npgsql.TypeHandlers
                     return true;
 
                 case WkbIdentifier.Polygon:
-                    var pol = (PostgisPolygon)geom;
+                    var pol = (PostgisPolygon)_toWrite;
                     if (_irng == -1)
                     {
                         if (_buf.WriteSpaceLeft < 4)
@@ -369,7 +369,7 @@ namespace Npgsql.TypeHandlers
                     return true;
 
                 case WkbIdentifier.MultiPoint:
-                     var mp = (PostgisMultiPoint)geom;
+                    var mp = (PostgisMultiPoint)_toWrite;
                     if (_ipts == -1)
                     {
                         if (_buf.WriteSpaceLeft < 4)
@@ -387,9 +387,9 @@ namespace Npgsql.TypeHandlers
                         _buf.PostgisWriteDouble(mp[_ipts].Y);
                     }
                     return true;
-                    
+
                 case WkbIdentifier.MultiLineString:
-                    var ml = (PostgisMultiLineString)geom;
+                    var ml = (PostgisMultiLineString)_toWrite;
                     if (_irng == -1)
                     {
                         if (_buf.WriteSpaceLeft < 4)
@@ -420,7 +420,7 @@ namespace Npgsql.TypeHandlers
                     return true;
 
                 case WkbIdentifier.MultiPolygon:
-                    var mpl = (PostgisMultiPolygon)geom;
+                    var mpl = (PostgisMultiPolygon)_toWrite;
                     if (_ipol == -1)
                     {
                         if (_buf.WriteSpaceLeft < 4)
@@ -461,7 +461,7 @@ namespace Npgsql.TypeHandlers
                     return true;
 
                 case WkbIdentifier.GeometryCollection:
-                    var coll = (PostgisGeometryCollection)geom;
+                    var coll = (PostgisGeometryCollection)_toWrite;
                     if (!_newGeom)
                     {
                         if (_buf.WriteSpaceLeft < 4)
@@ -472,7 +472,7 @@ namespace Npgsql.TypeHandlers
                     }
                     for (Counter i = _icol.Peek(); i < coll.GeometryCount; i.Increment())
                     {
-                        if (!Write(ref directBuf, coll[i]))
+                        if (!Write(ref directBuf))
                             return false;
                         Reset();
                     }
@@ -482,11 +482,6 @@ namespace Npgsql.TypeHandlers
                 default:
                     throw new InvalidOperationException("Unknown Postgis identifier.");
             }
-        }
-
-        public bool Write(ref DirectBuffer directBuf)
-        {
-            return Write(ref directBuf, _toWrite);
         }
     }
 }
