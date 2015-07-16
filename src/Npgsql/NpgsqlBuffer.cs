@@ -620,69 +620,70 @@ namespace Npgsql
         #endregion
 
         #region Postgis
-        //  Postgis returns bytes in ndr representation.
-        internal int PostgisReadInt32()
+        
+        internal int ReadInt32(ByteOrder bo)
         {
             Contract.Requires(ReadBytesLeft >= sizeof(int));
-            var result = BitConverter.ToInt32(_buf, ReadPosition);
-            ReadPosition += 4;
+            int result;
+            if (BitConverter.IsLittleEndian == (bo == ByteOrder.LSB))
+            {
+                result = BitConverter.ToInt32(_buf, ReadPosition);
+                ReadPosition += 4;
+            }
+            else
+            {
+                _workspace[3] = _buf[ReadPosition++];
+                _workspace[2] = _buf[ReadPosition++];
+                _workspace[1] = _buf[ReadPosition++];
+                _workspace[0] = _buf[ReadPosition++];
+                result = BitConverter.ToInt32(_workspace, 0);
+            }
             return result;
         }
 
-        internal uint PostgisReadUInt32()
+        internal uint ReadUInt32(ByteOrder bo)
         {
             Contract.Requires(ReadBytesLeft >= sizeof(int));
-            var result = BitConverter.ToUInt32(_buf, ReadPosition);
-            ReadPosition += 4;
+            uint result;
+            if (BitConverter.IsLittleEndian == (bo == ByteOrder.LSB))
+            {
+                result = BitConverter.ToUInt32(_buf, ReadPosition);
+                ReadPosition += 4;
+            }
+            else
+            {
+                _workspace[3] = _buf[ReadPosition++];
+                _workspace[2] = _buf[ReadPosition++];
+                _workspace[1] = _buf[ReadPosition++];
+                _workspace[0] = _buf[ReadPosition++];
+                result = BitConverter.ToUInt32(_workspace, 0);
+            }
             return result;
         }
 
-        internal double PostgisReadDouble()
+        internal double ReadDouble(ByteOrder bo)
         {
             Contract.Requires(ReadBytesLeft >= sizeof(double));
-            var result = BitConverter.ToDouble(_buf, ReadPosition);
-            ReadPosition += 8;
-            return result;
+            
+            if (BitConverter.IsLittleEndian == (ByteOrder.LSB == bo))
+            {
+                var result = BitConverter.ToDouble(_buf, ReadPosition);
+                ReadPosition += 8;
+                return result;
+            }
+            else
+            {
+                _workspace[7] = _buf[ReadPosition++];
+                _workspace[6] = _buf[ReadPosition++];
+                _workspace[5] = _buf[ReadPosition++];
+                _workspace[4] = _buf[ReadPosition++];
+                _workspace[3] = _buf[ReadPosition++];
+                _workspace[2] = _buf[ReadPosition++];
+                _workspace[1] = _buf[ReadPosition++];
+                _workspace[0] = _buf[ReadPosition++];
+                return BitConverter.ToDouble(_workspace, 0);
+            }
         }
-
-        public void PostgisWriteInt32(int i)
-        {
-            Contract.Requires(WriteSpaceLeft >= sizeof(int));
-            var pos = _writePosition;
-            _buf[pos++] = (byte)i;
-            _buf[pos++] = (byte)(i >> 8);
-            _buf[pos++] = (byte)(i >> 16);
-            _buf[pos++] = (byte)(i >> 24);
-            _writePosition = pos;
-        }
-
-        public void PostgisWriteUInt32(uint i)
-        {
-            Contract.Requires(WriteSpaceLeft >= sizeof(int));
-            var pos = _writePosition;
-            _buf[pos++] = (byte)i;
-            _buf[pos++] = (byte)(i >> 8);
-            _buf[pos++] = (byte)(i >> 16);
-            _buf[pos++] = (byte)(i >> 24);
-            _writePosition = pos;
-        }
-
-        public void PostgisWriteDouble(double d)
-        {
-            Contract.Requires(WriteSpaceLeft >= sizeof(double));
-            _bitConverterUnion.float8 = d;
-            var pos = _writePosition;
-            _buf[pos++] = _bitConverterUnion.b0;
-            _buf[pos++] = _bitConverterUnion.b1;
-            _buf[pos++] = _bitConverterUnion.b2;
-            _buf[pos++] = _bitConverterUnion.b3;
-            _buf[pos++] = _bitConverterUnion.b4;
-            _buf[pos++] = _bitConverterUnion.b5;
-            _buf[pos++] = _bitConverterUnion.b6;
-            _buf[pos++] = _bitConverterUnion.b7;
-            _writePosition = pos;
-        }
-
         #endregion
     }
 }
