@@ -14,7 +14,7 @@ namespace Npgsql.Tests.Types
 {
     class PostgisTest : TestBase
     {
-        public class TestAtt : ITestCaseData 
+        public class TestAtt 
         {
             public IGeometry Geom;
             public string SQL;
@@ -87,37 +87,36 @@ namespace Npgsql.Tests.Types
             }
         }
 
-        [Test, TestCaseSource("_tests")]        
-        public void PostgisTestWrite(string geomIdx)
+        [Test, TestCaseSource("_tests")]
+        public void PostgisTestWrite(TestAtt a)
         {
             using (var cmd = Conn.CreateCommand())
             {                
-                cmd.Parameters.AddWithValue("p1", NpgsqlTypes.NpgsqlDbType.Geometry,_geoms[geomIdx].Geom);
-                _geoms[geomIdx].Geom.SRID = 0;
-                cmd.CommandText = "Select st_asewkb(:p1) = st_asewkb(" + _geoms[geomIdx].SQL + ")";
+                cmd.Parameters.AddWithValue("p1", NpgsqlTypes.NpgsqlDbType.Geometry,a.Geom);
+                a.Geom.SRID = 0;
+                cmd.CommandText = "Select st_asewkb(:p1) = st_asewkb(" + a.SQL + ")";
                 Assert.IsTrue((bool)cmd.ExecuteScalar());
             }
         }
 
         [Test, TestCaseSource("_tests")]
-        public void PostgisTestWriteSrid(string geomIdx)
+        public void PostgisTestWriteSrid(TestAtt a)
         {
             using (var cmd = Conn.CreateCommand())
             {
-                cmd.Parameters.AddWithValue("p1", NpgsqlTypes.NpgsqlDbType.Geometry, _geoms[geomIdx].Geom);
-                _geoms[geomIdx].Geom.SRID = 3942;
-                cmd.CommandText = "Select st_asewkb(:p1) = st_asewkb(st_setsrid("+ _geoms[geomIdx].SQL + ",3942))";
+                cmd.Parameters.AddWithValue("p1", NpgsqlTypes.NpgsqlDbType.Geometry, a.Geom);
+                a.Geom.SRID = 3942;
+                cmd.CommandText = "Select st_asewkb(:p1) = st_asewkb(st_setsrid("+ a.SQL + ",3942))";
                 var p = (bool)cmd.ExecuteScalar();
                 Assert.IsTrue(p);
             }
         }
 
         [Test, TestCaseSource("_tests")]
-        public void PostgisTestReadSrid(string geomIdx)
+        public void PostgisTestReadSrid(TestAtt a)
         {
             using (var cmd = Conn.CreateCommand())
             {
-                var a = _geoms[geomIdx];
                 cmd.CommandText = "Select st_setsrid(" + a.SQL + ",3942)";
                 var p = cmd.ExecuteScalar();
                 Assert.IsTrue(p.Equals(a.Geom));
