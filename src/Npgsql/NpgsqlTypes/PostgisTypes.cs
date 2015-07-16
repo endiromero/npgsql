@@ -188,6 +188,10 @@ namespace NpgsqlTypes
             _points = points.ToArray();
         }
 
+        public PostgisLineString(Coordinate2D[] points)
+        {
+            _points = points;
+        }
 
         public Int32 PointCount
         {
@@ -269,6 +273,11 @@ namespace NpgsqlTypes
             {
                 return _rings[ringIndex];
             }
+        }
+
+        public PostgisPolygon(Coordinate2D[][] rings)
+        {
+            _rings = rings;
         }
 
         public PostgisPolygon(IEnumerable<IEnumerable<Coordinate2D>> rings)
@@ -372,6 +381,11 @@ namespace NpgsqlTypes
             return this.GetEnumerator();
         }
 
+        public PostgisMultiPoint (Coordinate2D[] points)
+        {
+            _points = points;
+        }
+
         public PostgisMultiPoint(IEnumerable<Coordinate2D> points)
         {
             _points = points.ToArray();
@@ -471,6 +485,11 @@ namespace NpgsqlTypes
             return this.GetEnumerator();
         }
 
+        public PostgisMultiLineString(PostgisLineString[] linestrings)
+        {
+            _lineStrings = linestrings;
+        }
+
         public PostgisMultiLineString(IEnumerable<PostgisLineString> linestrings)
         {
             _lineStrings = linestrings.ToArray();
@@ -560,6 +579,11 @@ namespace NpgsqlTypes
         public PostgisPolygon this[Int32 index]
         {
             get { return _polygons[index]; }
+        }
+
+        public PostgisMultiPolygon(PostgisPolygon[] polygons)
+        {
+            _polygons = polygons;
         }
 
         public PostgisMultiPolygon(IEnumerable<PostgisPolygon> polygons)
@@ -655,6 +679,11 @@ namespace NpgsqlTypes
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
             return this.GetEnumerator();
+        }
+
+        public PostgisGeometryCollection(IGeometry[] geometries)
+        {
+            _geometries = geometries;
         }
 
         public PostgisGeometryCollection(IEnumerable<IGeometry> geometries)
