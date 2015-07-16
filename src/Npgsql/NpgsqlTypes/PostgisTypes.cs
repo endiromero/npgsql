@@ -82,8 +82,6 @@ namespace NpgsqlTypes
         /// The Spatial Reference System Identifier of the geometry (0 if unspecified).
         /// </summary>
         public uint SRID { get; set; }
-
-            
     }
 
     /// <summary>
