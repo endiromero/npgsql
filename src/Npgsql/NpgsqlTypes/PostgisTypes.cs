@@ -238,7 +238,7 @@ namespace NpgsqlTypes
     }
 
     /// <summary>
-    /// Represents an Ogc 2D Polygon.
+    /// Represents an Postgis 2D Polygon.
     /// </summary>
     public class PostgisPolygon : IGeometry, IEquatable<PostgisPolygon>
     {
