@@ -217,7 +217,7 @@ namespace NpgsqlTypes
             if (_points.Length != other._points.Length) return false;
             for (int i = 0; i < _points.Length; i++)
             {
-                if (!_points[i].Equals(other._points[i].Y))
+                if (!_points[i].Equals(other._points[i]))
                     return false;
             }
             return true;
