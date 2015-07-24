@@ -55,7 +55,7 @@ namespace Npgsql.Tests.Types
                                                     })})
                             }
                             ),
-                    SQL = "ST_ForceCollection(st_collect(st_makepoint(1,1),st_multi(st_makepolygon(st_makeline(ARRAY[st_makepoint(1,1),st_makepoint(2,2),st_makepoint(3,3),st_makepoint(1,1)])))))"
+                    SQL = "st_collect(st_makepoint(1,1),st_multi(st_makepolygon(st_makeline(ARRAY[st_makepoint(1,1),st_makepoint(2,2),st_makepoint(3,3),st_makepoint(1,1)]))))"
                 },
             new TestAtt(){Geom = new PostgisGeometryCollection(new IGeometry[]{new PostgisPoint(1,1),
                                                                                new PostgisGeometryCollection(new IGeometry[]
@@ -71,7 +71,7 @@ namespace Npgsql.Tests.Types
                                                              })
                                 })
                             }),
-                SQL = "st_forcecollection(st_collect(st_makepoint(1,1),ST_ForceCollection(st_collect(st_makepoint(1,1),st_multi(st_makepolygon(st_makeline(ARRAY[st_makepoint(1,1),st_makepoint(2,2),st_makepoint(3,3),st_makepoint(1,1)])))))))"
+                SQL = "st_collect(st_makepoint(1,1),ST_ForceCollection(st_collect(st_makepoint(1,1),st_multi(st_makepolygon(st_makeline(ARRAY[st_makepoint(1,1),st_makepoint(2,2),st_makepoint(3,3),st_makepoint(1,1)]))))))"
             }
     };
         
