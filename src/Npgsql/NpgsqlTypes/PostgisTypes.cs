@@ -54,6 +54,17 @@ namespace NpgsqlTypes
         /// <param name="x">X coordinate</param>
         /// <param name="y">Y coordinate</param>
         public Coordinate2D(Double x, Double y) { X = x; Y = y;}
+
+        public bool Equals(Coordinate2D c)
+        {
+            return X == c.X && Y == c.Y;
+        }
+
+        public override int GetHashCode()
+        {
+            return X.GetHashCode() ^ PGUtil.RotateShift(Y.GetHashCode(), sizeof(int) / 2);
+        }
+
     }
               
     /// <summary>
@@ -124,7 +135,7 @@ namespace NpgsqlTypes
         {
             if (object.ReferenceEquals(other, null))
                 return false;
-            return X == other.X && Y == other.Y;
+            return _coord.Equals(other._coord);
         }
 
 
@@ -206,7 +217,7 @@ namespace NpgsqlTypes
             if (_points.Length != other._points.Length) return false;
             for (int i = 0; i < _points.Length; i++)
             {
-                if (!(_points[i].X == other._points[i].X && _points[i].Y == other._points[i].Y))
+                if (!_points[i].Equals(other._points[i].Y))
                     return false;
             }
             return true;
@@ -298,7 +309,7 @@ namespace NpgsqlTypes
                     return false;
                 for (int j = 0; j < _rings[i].Length; j++)
                 {
-                    if (!(_rings[i][j].X == other._rings[i][j].X && _rings[i][j].Y == other._rings[i][j].Y))
+                    if (!_rings[i][j].Equals (other._rings[i][j]))
                         return false;
                 }
             }
@@ -405,7 +416,7 @@ namespace NpgsqlTypes
                 return false;
             for (int i = 0; i < _points.Length; i++)
             {
-                if (!(_points[i].X == other._points[i].X && _points[i].Y == other._points[i].Y)) 
+                if (!_points[i].Equals(other._points[i]))
                     return false;
             }
             return true;
