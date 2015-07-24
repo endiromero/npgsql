@@ -14,7 +14,7 @@ namespace Npgsql.Tests.Types
 {
     class PostgisTest : TestBase
     {
-        public class TestAtt 
+        public class TestAtt
         {
             public IGeometry Geom;
             public string SQL;
@@ -36,7 +36,7 @@ namespace Npgsql.Tests.Types
                             SQL = "st_multi(st_makepoint(1,1))"},
             new TestAtt(){ Geom = new PostgisMultiLineString(new PostgisLineString[] { new PostgisLineString(new Coordinate2D[] { new Coordinate2D(1D, 1D), new Coordinate2D(1D, 2500D) }) }),
                            SQL = "st_multi(st_makeline(st_makepoint(1,1),st_makepoint(1,2500)))"},
-            new TestAtt(){Geom = new PostgisMultiPolygon(new PostgisPolygon[] {new PostgisPolygon( new Coordinate2D[][] 
+            new TestAtt(){Geom = new PostgisMultiPolygon(new PostgisPolygon[] {new PostgisPolygon( new Coordinate2D[][]
                                                     { new Coordinate2D[] {
                                                         new Coordinate2D(1d,1d),
                                                         new Coordinate2D(2d,2d),
@@ -46,7 +46,7 @@ namespace Npgsql.Tests.Types
                            SQL = "st_multi(st_makepolygon(st_makeline(ARRAY[st_makepoint(1,1),st_makepoint(2,2),st_makepoint(3,3),st_makepoint(1,1)])))"},
             new TestAtt(){Geom = new PostgisGeometryCollection(new IGeometry[]{
                             new PostgisPoint(1,1),
-                            new PostgisMultiPolygon (new PostgisPolygon[] {new PostgisPolygon( new Coordinate2D[][] 
+                            new PostgisMultiPolygon (new PostgisPolygon[] {new PostgisPolygon( new Coordinate2D[][]
                                                     { new Coordinate2D[] {
                                                         new Coordinate2D(1d,1d),
                                                         new Coordinate2D(2d,2d),
@@ -61,7 +61,7 @@ namespace Npgsql.Tests.Types
                                                                                new PostgisGeometryCollection(new IGeometry[]
                                                                                             {new PostgisPoint(1,1),
                                                                                             new PostgisMultiPolygon (new PostgisPolygon[] {
-                                                                                                                    new PostgisPolygon( new Coordinate2D[][] 
+                                                                                                                    new PostgisPolygon( new Coordinate2D[][]
                                                                                                                                       { new Coordinate2D[] {
                                                                                                                                         new Coordinate2D(1d,1d),
                                                                                                                                         new Coordinate2D(2d,2d),
@@ -71,10 +71,10 @@ namespace Npgsql.Tests.Types
                                                              })
                                 })
                             }),
-                SQL = "st_collect(st_makepoint(1,1),ST_ForceCollection(st_collect(st_makepoint(1,1),st_multi(st_makepolygon(st_makeline(ARRAY[st_makepoint(1,1),st_makepoint(2,2),st_makepoint(3,3),st_makepoint(1,1)]))))))"
+                SQL = "st_collect(st_makepoint(1,1),st_collect(st_makepoint(1,1),st_multi(st_makepolygon(st_makeline(ARRAY[st_makepoint(1,1),st_makepoint(2,2),st_makepoint(3,3),st_makepoint(1,1)])))))"
             }
     };
-        
+
         [Test,TestCaseSource("_tests")]
         public void PostgisTestRead(TestAtt att)
         {
@@ -91,7 +91,7 @@ namespace Npgsql.Tests.Types
         public void PostgisTestWrite(TestAtt a)
         {
             using (var cmd = Conn.CreateCommand())
-            {                
+            {
                 cmd.Parameters.AddWithValue("p1", NpgsqlTypes.NpgsqlDbType.Geometry,a.Geom);
                 a.Geom.SRID = 0;
                 cmd.CommandText = "Select st_asewkb(:p1) = st_asewkb(" + a.SQL + ")";
@@ -103,7 +103,7 @@ namespace Npgsql.Tests.Types
                 {
                     Assert.Fail("Exception caught on " + a.Geom.ToString());
                 }
-                
+
             }
         }
 
@@ -155,7 +155,7 @@ namespace Npgsql.Tests.Types
                 Assert.IsTrue((bool)cmd.ExecuteScalar());
             }
         }
-        
+
         protected override void SetUp()
         {
             base.SetUp();
