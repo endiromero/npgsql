@@ -89,13 +89,13 @@ namespace NpgsqlTypes
     /// </summary>
     public class PostgisPoint : IGeometry, IEquatable<PostgisPoint>
     {
-        private Double _x;
-        private Double _y;
 
         internal override WkbIdentifier Identifier
         {
             get { return WkbIdentifier.Point; }
         }
+
+        Coordinate2D _coord;
 
         protected override int GetLenHelper()
         {
@@ -104,20 +104,20 @@ namespace NpgsqlTypes
 
         public PostgisPoint(Double x, Double y)
         {
-            _x = x;
-            _y = y;
+            _coord.X = x;
+            _coord.Y = y;
         }
 
         public Double X
         {
-            get { return _x; }
-            set { _x = value; }
+            get { return _coord.X ; }
+            set { _coord.X = value; }
         }
 
         public Double Y
         {
-            get { return _y; }
-            set { _y = value; }
+            get { return _coord.Y; }
+            set { _coord.Y = value; }
         }
 
         public bool Equals(PostgisPoint other)
