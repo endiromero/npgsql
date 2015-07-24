@@ -397,6 +397,11 @@ namespace NpgsqlTypes
             _points = points;
         }
 
+        public PostgisMultiPoint(IEnumerable<PostgisPoint> points)
+        {
+            _points = points.Select(x => new Coordinate2D(x.X, x.Y)).ToArray();
+        }
+
         public PostgisMultiPoint(IEnumerable<Coordinate2D> points)
         {
             _points = points.ToArray();
