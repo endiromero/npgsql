@@ -305,7 +305,7 @@ namespace Npgsql
         bool NextResultInternal()
         {
             Contract.Requires(!IsSchemaOnly);
-            Contract.Ensures(Command.CommandType != CommandType.StoredProcedure || Contract.Result<bool>() == false);
+            // Contract.Ensures(Command.CommandType != CommandType.StoredProcedure || Contract.Result<bool>() == false);
 
             try
             {
@@ -604,6 +604,7 @@ namespace Npgsql
                 // exception thrown from a type handler. Or if the connection was closed while the reader
                 // was still open
                 State = ReaderState.Closed;
+                Command.State = CommandState.Idle;
                 if (ReaderClosed != null) {
                     ReaderClosed(this, EventArgs.Empty);
                 }
@@ -613,7 +614,14 @@ namespace Npgsql
             if (State != ReaderState.Consumed) {
                 Consume();
             }
-            if ((_behavior & CommandBehavior.CloseConnection) != 0) {
+
+            Cleanup();
+        }
+
+        internal void Cleanup()
+        {
+            if ((_behavior & CommandBehavior.CloseConnection) != 0)
+            {
                 _connection.Close();
             }
 
@@ -622,45 +630,11 @@ namespace Npgsql
             _connector.CurrentReader = null;
             _connector.EndUserAction();
 
-            if (ReaderClosed != null) {
-                ReaderClosed(this, EventArgs.Empty);
-                ReaderClosed = null;
-            }
-        }
-
-        /// <summary>
-        /// Special version of close used when a connection is closed with an open reader.
-        /// We don't want to simply close because that would block the user until the open reader
-        /// is consumed, potentially a long process.
-        /// </summary>
-        internal async Task CloseImmediate()
-        {
-            State = ReaderState.Closed;
-            Command.State = CommandState.Idle;
-            _connector.CurrentReader = null;
-
-            if (ReaderClosed != null) {
-                ReaderClosed(this, EventArgs.Empty);
-                ReaderClosed = null;
-            }
-
-            if (IsSchemaOnly) {
-                return;
-            }
-
-            // TODO: Consume asynchronously?
-            if (State != ReaderState.Consumed)
+            if (ReaderClosed != null)
             {
-                if (_row != null)
-                {
-                    await _row.ConsumeAsync();
-                    _row = null;
-                }
-
-                await SkipUntilAsync(BackendMessageCode.ReadyForQuery);
+                ReaderClosed(this, EventArgs.Empty);
+                ReaderClosed = null;
             }
-
-            _connector.EndUserAction();
         }
 
         #endregion

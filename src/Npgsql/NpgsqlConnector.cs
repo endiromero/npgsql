@@ -403,8 +403,6 @@ namespace Npgsql
             Contract.Requires(Connection != null && Connection.Connector == this);
             Contract.Requires(State == ConnectorState.Closed);
             Contract.Ensures(State == ConnectorState.Ready);
-            Contract.EnsuresOnThrow<IOException>(State == ConnectorState.Closed);
-            Contract.EnsuresOnThrow<SocketException>(State == ConnectorState.Closed);
 
             State = ConnectorState.Connecting;
 
@@ -871,7 +869,15 @@ namespace Npgsql
             }
             catch (NpgsqlException)
             {
-                EndUserAction();
+                if (CurrentReader != null)
+                {
+                    // The reader cleanup will call EndUserAction
+                    CurrentReader.Cleanup();
+                }
+                else
+                {
+                    EndUserAction();
+                }
                 throw;
             }
             catch
