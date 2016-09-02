@@ -273,20 +273,18 @@ namespace Npgsql.Tests.Types
             {
                 using (var cmd = new NpgsqlCommand("CREATE TEMPORARY TABLE testcopybin (g geometry)", c))
                     cmd.ExecuteNonQuery();
-                    
+
                 try
                 {
                     using (var writer = c.BeginBinaryImport($"COPY testcopybin (g) FROM STDIN (FORMAT BINARY)"))
-                    {
                         for (int i = 0; i < 1000; i++)
                             writer.WriteRow(a.Geom);
-                    }
                 }
                 catch(Exception e)
                 {
                     Assert.Fail($"Copy from stdin failed with {e} at geometry {a.Geom}.");
                 }
-                
+
                 try
                 {
                     using (var rdr = c.BeginBinaryExport($"COPY testcopybin (g) TO STDOUT (FORMAT BINARY) "))
@@ -294,7 +292,7 @@ namespace Npgsql.Tests.Types
                         for (int i =0; i < 1000; i++)
                         {
                             rdr.StartRow();
-                            Assert.IsTrue(rdr.Read<PostgisGeometry>().Equals(a.Geom));
+                            Assert.IsTrue(a.Geom.Equals(rdr.Read<PostgisGeometry>()));
                         }
                     }
                 }
@@ -318,13 +316,13 @@ namespace Npgsql.Tests.Types
                 {
                     using (var writer = c.BeginBinaryImport("COPY testcopybinarray (g) FROM STDIN (FORMAT BINARY)"))
                         for (int i = 0; i < 1000; i++)
-                            writer.WriteRow(t);
+                            writer.WriteRow(new[] {t});
                 }
                 catch(Exception e)
                 {
                     Assert.Fail($"Copy from stdin failed with {e} at geometry {a.Geom}.");
                 }
-                
+
                 try
                 {
                     using (var rdr = c.BeginBinaryExport("COPY testcopybinarray (g) TO STDOUT (FORMAT BINARY)"))
