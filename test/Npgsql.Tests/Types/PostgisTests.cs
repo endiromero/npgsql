@@ -283,7 +283,9 @@ namespace Npgsql.Tests.Types
                     }
                 }
                 catch(Exception e)
+                {
                     Assert.Fail($"Copy from stdin failed with {e} at geometry {a.Geom}.");
+                }
                 
                 try
                 {
@@ -294,7 +296,9 @@ namespace Npgsql.Tests.Types
                     }
                 }
                 catch(Exception e)
+                {
                     Assert.Fail($"Copy from stdout failed with {e} at geometry {a.Geom}.");
+                }
             }
         }
 
@@ -316,7 +320,9 @@ namespace Npgsql.Tests.Types
                     }
                 }
                 catch(Exception e)
+                {
                     Assert.Fail($"Copy from stdin failed with {e} at geometry {a.Geom}.");
+                }
                 
                 try
                 {
@@ -330,7 +336,9 @@ namespace Npgsql.Tests.Types
                     }   
                 }
                 catch(Exception e)
+                {
                     Assert.Fail($"Copy to stdout failed with {e} at geometry {a.Geom}.");
+                }
             }
         }
 
