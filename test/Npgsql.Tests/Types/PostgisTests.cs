@@ -307,7 +307,6 @@ namespace Npgsql.Tests.Types
                     cmd.ExecuteNonQuery();
 
                 var t = new PostgisGeometry[3] { a.Geom, a.Geom, a.Geom };
-                int i = 0;
                 try
                 {
                     using (var writer = c.BeginBinaryImport("COPY testcopybinarray (g) FROM STDIN (FORMAT BINARY)"))
